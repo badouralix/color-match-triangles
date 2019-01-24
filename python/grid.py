@@ -3,8 +3,9 @@ Grid with border constraints
 """
 
 # Project
+from dot import Dot
 from tile import Tile
-from typing import Union
+from typing import List, Optional
 
 # Stdlib
 from collections import namedtuple
@@ -32,14 +33,14 @@ class UnexpectedBordersException(Exception):
 
 class Grid():
 
-    def __init__(self, size, borders):
+    def __init__(self, size: int, borders: List[List[Dot]]) -> None:
         # Checks
         assert(size > 0)
         self.check_borders(size, borders)
 
         # Allocations
         self.size = size
-        self.grid = [[None] * len for len in range(2 * size - 1, 0, -2)]
+        self.grid: List[List[Optional[Tile]]] = [[None] * len for len in range(2 * size - 1, 0, -2)]
         self.borders = borders
         self.missing = size * size
 
@@ -65,11 +66,11 @@ class Grid():
 
         return output
 
-    def get_tile(self, x: int, y: int) -> Union[None, Tile]:
+    def get_tile(self, x: int, y: int) -> Optional[Tile]:
         self.check_coordinates(x, y, self.size)
         return self.grid[y][x]
 
-    def set_tile(self, tile: Union[None, Tile], x: int, y: int) -> None:
+    def set_tile(self, tile: Optional[Tile], x: int, y: int) -> None:
         """
         Unsafe setter.
         """
@@ -99,7 +100,7 @@ class Grid():
         # Set tile
         self.set_tile(tile, x, y)
 
-    def remove_tile(self, x: int, y: int) -> Tile:
+    def remove_tile(self, x: int, y: int) -> Optional[Tile]:
         tile = self.get_tile(x, y)
         self.set_tile(None, x, y)
         return tile
@@ -144,7 +145,7 @@ class Grid():
         return self.missing == 0
 
     @staticmethod
-    def check_borders(size, borders) -> bool:
+    def check_borders(size, borders: List[List[Dot]]):
         if len(borders) != 3:
             raise UnexpectedBordersException(f"Unexpected number of borders (expected: 3, received: {len(borders)}")
 
@@ -153,7 +154,7 @@ class Grid():
                 raise UnexpectedBordersException(f"Unexpected border length in {border} (expected: {size}, received: {len(border)}")
 
     @staticmethod
-    def check_coordinates(x, y, size):
+    def check_coordinates(x: int, y: int, size: int):
         if x < 0 or y < 0 or y >= size or x > 2 * (size - y - 1):
             raise OutOfBoundsExceptions(f"Out of bounds coordinates ({x}, {y})")
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # Project
+from dot import Dot
 from grid import ColorConstraintViolationException, Grid, Position
 from tile import Tile
 
@@ -9,7 +10,7 @@ import dot
 # Stdlib
 from collections import defaultdict
 from random import shuffle, randint
-from typing import Dict, Set
+from typing import Dict, Generator, Set
 
 # Constants
 GRID_SIZE = 4
@@ -39,7 +40,7 @@ def next_position(pos: Position, size: int = GRID_SIZE) -> Position:
             return Position(x=pos.x - 1, y=pos.y)
 
 
-def next_tile(remaining_tiles: Set[Tile], tile_lookup: Dict[int, Set[Tile]], constraints: Tile) -> Tile:
+def next_tile(remaining_tiles: Set[Tile], tile_lookup: Dict[Dot, Set[Tile]], constraints: Tile) -> Generator[Tile, None, None]:
     """
     Generator of potentially valid tiles.
     """
@@ -57,7 +58,7 @@ def next_tile(remaining_tiles: Set[Tile], tile_lookup: Dict[int, Set[Tile]], con
         yield tile.rotate(angle=randint(0, 5) * 60)
 
 
-def rec_solve(pos: Position, grid: Grid, remaining_tiles: Set[Tile], tile_lookup: Dict[int, Set[Tile]]) -> bool:
+def rec_solve(pos: Position, grid: Grid, remaining_tiles: Set[Tile], tile_lookup: Dict[Dot, Set[Tile]]) -> bool:
     """
     Deterministic backtracking.
     """
