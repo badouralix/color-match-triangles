@@ -45,9 +45,9 @@ def next_tile(remaining_tiles: Set[Tile], tile_lookup: Dict[int, Set[Tile]], con
     """
     potential_tiles = remaining_tiles
 
-    for c in [constraints.left, constraints.middle, constraints.right]:
-        if c is not None:
-            potential_tiles = potential_tiles & tile_lookup[c]
+    for d in [constraints.left, constraints.middle, constraints.right]:
+        if d is not None:
+            potential_tiles = potential_tiles & tile_lookup[d]
 
     # Try to randomize a bit in order to find new solutions
     potential_tiles = list(potential_tiles)
@@ -124,8 +124,8 @@ def main():
     # Build a fast lookup table
     tile_lookup = defaultdict(set)
     for tile in tiles:
-        for c in [tile.left, tile.middle, tile.right]:
-            tile_lookup[c].add(tile)
+        for d in [tile.left, tile.middle, tile.right]:
+            tile_lookup[d].add(tile)
 
     # Start resolution
     rec_solve(Position(x=0, y=0), grid, tiles, tile_lookup)

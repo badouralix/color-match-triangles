@@ -107,20 +107,20 @@ class Grid():
     def get_constraints(self, x: int, y: int) -> Tile:
         self.check_coordinates(x, y, self.size)
 
-        c1 = None
-        c2 = None
-        c3 = None
-        rotation = 0 if x % 2 == 0 else 60
+        left = None
+        middle = None
+        right = None
+        rotation = 0 if x % 2 == 0 else 180
 
         if x == 0:
-            c1 = self.borders[1][y]
+            left = self.borders[1][y]
         else:
             neighbor = self.get_tile(x - 1, y)
             if neighbor is not None:
-                c1 = neighbor.right
+                left = neighbor.right
 
         if y == 0 and x % 2 == 0:
-            c2 = self.borders[0][x // 2]
+            middle = self.borders[0][x // 2]
         else:
             if x % 2 == 0:
                 neighbor = self.get_tile(x + 1, y - 1)
@@ -128,19 +128,16 @@ class Grid():
                 neighbor = self.get_tile(x - 1, y + 1)
 
             if neighbor is not None:
-                c2 = neighbor.middle
+                middle = neighbor.middle
 
         if x == 2 * (self.size - y - 1):
-            c3 = self.borders[2][y]
+            right = self.borders[2][y]
         else:
             neighbor = self.get_tile(x + 1, y)
             if neighbor is not None:
-                c3 = neighbor.left
+                right = neighbor.left
 
-        if rotation == 60:
-            c2, c3 = c3, c2
-
-        return Tile(c1, c2, c3, rotation)
+        return Tile(left, middle, right, rotation)
 
     @property
     def solved(self) -> bool:

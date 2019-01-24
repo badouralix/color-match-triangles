@@ -2,6 +2,12 @@
 Triangle tiles.
 """
 
+# Project
+from dot import Dot
+
+# Stdlib
+from typing import Optional
+
 
 class UnauthorizedRotationException(Exception):
     pass
@@ -9,10 +15,10 @@ class UnauthorizedRotationException(Exception):
 
 class Tile():
 
-    def __init__(self, c1, c2, c3, rotation=0):
-        self.c1 = c1
-        self.c2 = c2
-        self.c3 = c3
+    def __init__(self, left: Optional[Dot], middle: Optional[Dot], right: Optional[Dot], rotation: int = 0) -> None:
+        self.left = left
+        self.middle = middle
+        self.right = right
         self.rotation = rotation
 
     def __repr__(self):
@@ -29,43 +35,36 @@ class Tile():
 
         return output
 
-    @property
-    def left(self):
-        if self.rotation == 0 or self.rotation == 60:
-            return self.c1
-
-        if self.rotation == 240 or self.rotation == 300:
-            return self.c2
-
-        if self.rotation == 120 or self.rotation == 180:
-            return self.c3
-
-    @property
-    def middle(self):
-        if self.rotation == 120 or self.rotation == 300:
-            return self.c1
-
-        if self.rotation == 0 or self.rotation == 180:
-            return self.c2
-
-        if self.rotation == 60 or self.rotation == 240:
-            return self.c3
-
-    @property
-    def right(self):
-        if self.rotation == 180 or self.rotation == 240:
-            return self.c1
-
-        if self.rotation == 60 or self.rotation == 120:
-            return self.c2
-
-        if self.rotation == 0 or self.rotation == 300:
-            return self.c3
-
     def rotate(self, angle: int) -> 'Tile':
+        # Sanitize input
+        angle = angle % 360
+
         if angle % 60 != 0:
             raise UnauthorizedRotationException(f"Rotation must be a multiple of 60° (passed: {angle}°)")
 
+        # Save current dots
+        left = self.left
+        middle = self.middle
+        right = self.right
+
+        # Perform dot permutation
+        if angle == 120 or angle == 180:
+            self.left = right
+        elif angle == 240 or angle == 300:
+            self.left = middle
+
+        if angle == 60 or angle == 240:
+            self.middle = right
+        elif angle == 120 or angle == 300:
+            self.middle = left
+
+        if angle == 60 or angle == 120:
+            self.right = middle
+        elif angle == 180 or angle == 240:
+            self.right = left
+
+        # Save new tile rotation
         self.rotation = (self.rotation + angle) % 360
 
+        # Return tile
         return self
