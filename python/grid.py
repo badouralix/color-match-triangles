@@ -42,7 +42,6 @@ class Grid():
         self.size = size
         self.grid: List[List[Optional[Tile]]] = [[None] * len for len in range(2 * size - 1, 0, -2)]
         self.borders = borders
-        self.missing = size * size
 
     def __repr__(self):
         output = ""
@@ -65,6 +64,14 @@ class Grid():
             output += " " * 4
 
         return output
+
+    @property
+    def missing(self) -> int:
+        return sum(line.count(None) for line in self.grid)
+
+    @property
+    def solved(self) -> bool:
+        return self.missing == 0
 
     def get_tile(self, x: int, y: int) -> Optional[Tile]:
         self.check_coordinates(x, y, self.size)
@@ -139,10 +146,6 @@ class Grid():
                 right = neighbor.left
 
         return Tile(left, middle, right, rotation)
-
-    @property
-    def solved(self) -> bool:
-        return self.missing == 0
 
     @staticmethod
     def check_borders(size, borders: List[List[Dot]]):
